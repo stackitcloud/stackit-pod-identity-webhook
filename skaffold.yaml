@@ -1,0 +1,42 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: stackit-pod-identity-webhook
+build:
+  local:
+    push: false
+  artifacts:
+    - image: ghcr.io/stackitcloud/stackit-pod-identity-webhook
+      ko:
+        main: ./cmd/stackit-pod-identity-webhook
+deploy:
+  helm:
+    releases:
+      - name: stackit-pod-identity-webhook
+        chartPath: charts/stackit-pod-identity-webhook
+        valuesFiles:
+          - charts/stackit-pod-identity-webhook/values.yaml
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO_ghcr_io_stackitcloud_stackit_pod_identity_webhook}}"
+          image.tag: "{{.IMAGE_TAG_ghcr_io_stackitcloud_stackit_pod_identity_webhook}}"
+profiles:
+  - name: cert-manager
+    deploy:
+      helm:
+        releases:
+          - name: cert-manager
+            remoteChart: cert-manager
+            repo: https://charts.jetstack.io
+            namespace: cert-manager
+            createNamespace: true
+            upgradeOnChange: true
+            setValues:
+              crds.enabled: true
+          - name: stackit-pod-identity-webhook
+            chartPath: charts/stackit-pod-identity-webhook
+            valuesFiles:
+              - charts/stackit-pod-identity-webhook/values.yaml
+            setValueTemplates:
+              image.repository: "{{.IMAGE_REPO_ghcr_io_stackitcloud_stackit_pod_identity_webhook}}"
+              image.tag: "{{.IMAGE_TAG_ghcr_io_stackitcloud_stackit_pod_identity_webhook}}"
+              certmanager.enabled: "true"

@@ -1,0 +1,84 @@
+replicaCount: 2
+
+image:
+  # In production, use the one from ko/CI
+  repository: ghcr.io/stackitcloud/stackit-pod-identity-webhook
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart's appVersion.
+  tag: ""
+
+# String to override the name for the chart
+nameOverride: ""
+# String to fully override the fullname of the chart
+fullnameOverride: ""
+
+webhook:
+  port: 9443
+  # The CA bundle for the API server to trust the webhook's serving certificate.
+  # If certmanager.enabled is true, cert-manager will inject this automatically, and this field can be left empty.
+  # Otherwise, provide the base64 encoded CA bundle here.
+  caBundle: ""
+  # The secret name containing tls.crt and tls.key for the webhook server
+  # If certmanager.enabled is true, this secret will be created by cert-manager
+  tlsSecretName: "stackit-pod-identity-webhook-certs"
+  # failurePolicy for the webhook (Ignore or Fail).
+  # Defaults to Fail to guarantee that pods are not started without the required workload identity configuration.
+  # Note: If the webhook is down, pod creation in monitored namespaces will be blocked.
+  # Specific pods or namespaces can be excluded using the skip label (see README.md).
+  failurePolicy: Fail
+  # Whether to exclude the kube-system namespace from the webhook.
+  # Defaults to true to avoid breaking critical system pods.
+  excludeKubeSystem: true
+
+certmanager:
+  enabled: false
+  # Issuer to use for the certificate. If not provided, a self-signed issuer will be created.
+  issuerName: ""
+  # Kind of the issuer (Issuer or ClusterIssuer)
+  issuerKind: Issuer
+  # Duration of the certificate
+  duration: 2160h # 90d
+  # Renew the certificate before it expires
+  renewBefore: 360h # 15d
+
+service:
+  type: ClusterIP
+  port: 443
+  targetPort: 9443
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "stackit-pod-identity-webhook"
+
+# PodSecurityContext holds pod-level security attributes and common container settings.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1239
+  runAsGroup: 1239
+  fsGroup: 1239
+
+# SecurityContext holds security configuration that will be applied to a container.
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+# NodeSelector is a selector which must be true for the pod to fit on a node.
+nodeSelector: {}
+
+# Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
+tolerations: []
+
+# Affinity is a group of affinity scheduling rules.
+affinity: {}
