@@ -11,8 +11,8 @@ Just set the `workload-identity.stackit.cloud/service-account-email` for your de
 projected volume and environment variables for the SDK will be injected into your pod spec using the annotated `ServiceAccount`.
 
 ## Features
-- **Projected ServiceAccount Tokens:** Injects projected volumes with audience-bound tokens.
-- **SDK Configuration:** Automatically sets environment variables (`STACKIT_SERVICE_ACCOUNT_EMAIL`, etc.) for the STACKIT SDK.
+- **[Projected ServiceAccount Tokens](https://kubernetes.io/docs/concepts/storage/projected-volumes/#serviceaccounttoken):** Injects projected volumes with audience-bound tokens.
+- **SDK Configuration:** Automatically sets environment variables (`STACKIT_SERVICE_ACCOUNT_EMAIL`, etc.) for the [STACKIT SDK](https://github.com/stackitcloud/stackit-sdk-go).
 - **Configurable:** Supports per-ServiceAccount configuration via annotations for audience, token expiration, and IDP endpoints.
 
 ## Supported Annotations
@@ -20,33 +20,21 @@ projected volume and environment variables for the SDK will be injected into you
 ### ServiceAccount Annotations
 The webhook looks for the following annotations on `ServiceAccounts`:
 
-| Annotation | Description | Default |
-| --- | --- | --- |
-| `workload-identity.stackit.cloud/service-account-email` | Enables workload identity and specifies the STACKIT SA email. | Required to enable |
-| `workload-identity.stackit.cloud/audience` | Audience for the projected token. | `sts.accounts.stackit.cloud` |
-| `workload-identity.stackit.cloud/service-account-token-expiration-seconds` | Validity of the projected SA token. | `600` |
-| `workload-identity.stackit.cloud/idp-token-expiration-seconds` | Validity of the token issued by the IdP. | SDK default |
-| `workload-identity.stackit.cloud/idp-token-endpoint` | The IdP endpoint for token exchange. | SDK default |
-| `workload-identity.stackit.cloud/federated-token-file` | Path to the projected token file. Also changes mount path. | SDK default |
-
-### Pod Annotations
-| Annotation | Description |
-| --- | --- |
-| `workload-identity.stackit.cloud/skip-pod-identity-webhook` | Set to `true` to skip mutation for a specific Pod. |
+| Annotation | Description                                                                                                                                                                                             | Default |
+| --- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
+| `workload-identity.stackit.cloud/service-account-email` | Enables workload identity and specifies the STACKIT Service Account email.                                                                                                                              | Required to enable |
+| `workload-identity.stackit.cloud/audience` | Audience for the projected token. The audience is part of the configured trust relationship at the Identity Provider. For use with the STACKIT Identity Provider you usually don't need to change this. | `sts.accounts.stackit.cloud` |
+| `workload-identity.stackit.cloud/service-account-token-expiration-seconds` | Validity of the projected Kubernetes Service Account token.                                                                                                                                             | `600` |
+| `workload-identity.stackit.cloud/idp-token-expiration-seconds` | Validity of the token issued by the Identity Provider.                                                                                                                                                  | SDK default |
+| `workload-identity.stackit.cloud/idp-token-endpoint` | The Identity Provider endpoint for token exchange.                                                                                                                                                      | SDK default |
+| `workload-identity.stackit.cloud/federated-token-file` | Path to the projected token file. Also changes mount path.                                                                                                                                              | SDK default |
 
 ## Exclusion Logic
-The webhook can be configured to skip mutation for specific resources using either **Labels** or **Annotations**.
-
-### Comparison
-| Mechanism | Scope | Description |
-| --- | --- | --- |
-| **Labels** | Pods & Namespaces | **Preferred.** The Kubernetes API server filters the request before it even reaches the webhook. |
-| **Annotations** | Pods | Useful for metadata-heavy workflows where labels are restricted. Checked internally by the webhook code. |
+The webhook can be configured to skip mutation for specific resources using either **Labels**
 
 ### How to skip
 
-- **Skip a specific Pod (Label - Recommended):** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
-- **Skip a specific Pod (Annotation):** Add the annotation `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
+- **Skip a specific Pod:** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
 - **Skip a whole Namespace:** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Namespace. All Pods in this namespace will be ignored.
 > [!NOTE]
 > Label-based filtering and the exclusion of the `kube-system` namespace depend on the `MutatingWebhookConfiguration` selectors. These are pre-configured in the provided Helm chart and come as a standard feature in STACKIT Kubernetes Engine (SKE).
@@ -55,10 +43,10 @@ The webhook can be configured to skip mutation for specific resources using eith
 
 ## Production Deployment
 
-For production, it is highly recommended to use [cert-manager](https://cert-manager.io/) to manage the webhook's TLS certificates.
+For production, it is recommended to use [cert-manager](https://cert-manager.io/) to manage the webhook's TLS certificates.
 
 1. **Install cert-manager** in your cluster.
-2. **Configure an Issuer or ClusterIssuer.** For example, a CA issuer or one using ACME (Let's Encrypt).
+2. **Configure an Issuer or ClusterIssuer.**
 3. **Deploy the Helm chart** with cert-manager enabled:
    ```bash
    helm install stackit-pod-identity-webhook ./charts/stackit-pod-identity-webhook 
