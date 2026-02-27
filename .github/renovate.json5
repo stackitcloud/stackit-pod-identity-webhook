@@ -1,0 +1,56 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    'github>stackitcloud/ske-ci-infra//config/renovate/ske.json5',
+  ],
+  additionalReviewers: [
+    'crigertg',
+  ],
+  baseBranchPatterns: [
+    'main',
+  ],
+  packageRules: [
+    {
+      matchManagers: [
+        'gomod',
+      ],
+      matchUpdateTypes: [
+        'patch',
+        'digest',
+      ],
+      automerge: true,
+      addLabels: [
+        'skip-review',
+      ],
+    },
+    {
+      matchPackageNames: [
+        '/^k8s.io/',
+      ],
+      matchBaseBranches: [
+        'main',
+      ],
+      automerge: false,
+    },
+    {
+      groupName: 'devTools non-major',
+      matchManagers: [
+        'custom.regex',
+      ],
+      matchFileNames: [
+        '/Makefile$/',
+        '/\\.mk$/',
+        '/\\.sh$/',
+      ],
+      matchUpdateTypes: [
+        'minor',
+        'patch',
+      ],
+      automerge: true,
+      addLabels: [
+        'skip-review',
+      ],
+    },
+  ],
+}

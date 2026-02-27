@@ -1,1 +1,76 @@
 # stackit-pod-identity-webhook
+
+A Kubernetes mutating admission webhook that injects STACKIT workload identity compatible tokens into pods.
+This enables "secret-less" authentication for workloads running in Kubernetes clusters which need to authenticate
+for the STACKIT API.
+
+## Use with SKE (STACKIT Kubernetes Engine)
+
+If you're using SKE you don't need to setup this webhook in your cluster. It comes preconfigured with every SKE cluster.
+Just set the `workload-identity.stackit.cloud/service-account-email` for your desired `ServiceAccount` and the
+projected volume and environment variables for the SDK will be injected into your pod spec using the annotated `ServiceAccount`.
+
+## Features
+- **Projected ServiceAccount Tokens:** Injects projected volumes with audience-bound tokens.
+- **SDK Configuration:** Automatically sets environment variables (`STACKIT_SERVICE_ACCOUNT_EMAIL`, etc.) for the STACKIT SDK.
+- **Configurable:** Supports per-ServiceAccount configuration via annotations for audience, token expiration, and IDP endpoints.
+
+## Supported Annotations
+
+### ServiceAccount Annotations
+The webhook looks for the following annotations on `ServiceAccounts`:
+
+| Annotation | Description | Default |
+| --- | --- | --- |
+| `workload-identity.stackit.cloud/service-account-email` | Enables workload identity and specifies the STACKIT SA email. | Required to enable |
+| `workload-identity.stackit.cloud/audience` | Audience for the projected token. | `sts.accounts.stackit.cloud` |
+| `workload-identity.stackit.cloud/service-account-token-expiration-seconds` | Validity of the projected SA token. | `600` |
+| `workload-identity.stackit.cloud/idp-token-expiration-seconds` | Validity of the token issued by the IdP. | SDK default |
+| `workload-identity.stackit.cloud/idp-token-endpoint` | The IdP endpoint for token exchange. | SDK default |
+| `workload-identity.stackit.cloud/federated-token-file` | Path to the projected token file. Also changes mount path. | SDK default |
+
+### Pod Annotations
+| Annotation | Description |
+| --- | --- |
+| `workload-identity.stackit.cloud/skip-pod-identity-webhook` | Set to `true` to skip mutation for a specific Pod. |
+
+## Exclusion Logic
+The webhook can be configured to skip mutation for specific resources using either **Labels** or **Annotations**.
+
+### Comparison
+| Mechanism | Scope | Description |
+| --- | --- | --- |
+| **Labels** | Pods & Namespaces | **Preferred.** The Kubernetes API server filters the request before it even reaches the webhook. |
+| **Annotations** | Pods | Useful for metadata-heavy workflows where labels are restricted. Checked internally by the webhook code. |
+
+### How to skip
+
+- **Skip a specific Pod (Label - Recommended):** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
+- **Skip a specific Pod (Annotation):** Add the annotation `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
+- **Skip a whole Namespace:** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Namespace. All Pods in this namespace will be ignored.
+> [!NOTE]
+> Label-based filtering and the exclusion of the `kube-system` namespace depend on the `MutatingWebhookConfiguration` selectors. These are pre-configured in the provided Helm chart and come as a standard feature in STACKIT Kubernetes Engine (SKE).
+
+# Deployment
+
+## Production Deployment
+
+For production, it is highly recommended to use [cert-manager](https://cert-manager.io/) to manage the webhook's TLS certificates.
+
+1. **Install cert-manager** in your cluster.
+2. **Configure an Issuer or ClusterIssuer.** For example, a CA issuer or one using ACME (Let's Encrypt).
+3. **Deploy the Helm chart** with cert-manager enabled:
+   ```bash
+   helm install stackit-pod-identity-webhook ./charts/stackit-pod-identity-webhook 
+     --set certmanager.enabled=true 
+     --set certmanager.issuerName=<your-issuer-name> 
+     --set certmanager.issuerKind=<Issuer-or-ClusterIssuer>
+   ```
+
+When `certmanager.enabled` is `true`, the chart will:
+- Create a `Certificate` resource.
+- Use `cert-manager`'s CA injector to automatically populate the `caBundle` in the `MutatingWebhookConfiguration`.
+
+## Development
+
+For information on how to develop and test the webhook, please see [docs/development.md](docs/development.md).
