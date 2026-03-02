@@ -31,7 +31,7 @@ After deploying the webhook you can check if it works:
 
 1. Apply the sample resources:
    ```bash
-   kubectl apply -f exsamples/test-identity.yaml
+   kubectl apply -f examples/test-identity.yaml
    ```
 2. Verify the mutation on the Pod:
    ```bash

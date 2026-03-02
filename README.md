@@ -30,9 +30,7 @@ The webhook looks for the following annotations on `ServiceAccounts`:
 | `workload-identity.stackit.cloud/federated-token-file` | Path to the projected token file. Also changes mount path.                                                                                                                                              | SDK default |
 
 ## Exclusion Logic
-The webhook can be configured to skip mutation for specific resources using either **Labels**
-
-### How to skip
+The webhook can be configured to skip mutation for specific resources using labels:
 
 - **Skip a specific Pod:** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Pod.
 - **Skip a whole Namespace:** Add the label `workload-identity.stackit.cloud/skip-pod-identity-webhook: "true"` to the Namespace. All Pods in this namespace will be ignored.
