@@ -56,6 +56,14 @@ verify: verify-fmt verify-modules check ## Runs formatting checks, module tidyin
 skaffold-dev: ## Run skaffold dev with cert-manager
 	skaffold dev -p cert-manager
 
+.PHONY: kind-up
+kind-up: ## Create kind cluster.
+	kind create cluster
+
+.PHONY: kind-down
+kind-down: ## Delete kind cluster.
+	kind delete cluster
+
 ##@ Build
 
 .PHONY: build

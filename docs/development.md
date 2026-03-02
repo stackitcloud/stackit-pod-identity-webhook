@@ -19,10 +19,10 @@ Development tools like `ko`, `golangci-lint`, and `setup-envtest` are managed au
 To see all available targets and their descriptions, run `make help`.
 
 # Local Deployment (kind)
-The easiest way to deploy locally is using the provided Makefile target, which automatically installs `cert-manager` and the webhook:
+The easiest way to deploy locally is using the provided Makefile targets, which automatically manage the cluster and install `cert-manager` and the webhook:
 
 ```bash
-kind create cluster
+make kind-up
 make skaffold-dev
 ```
 ## Testing Mutation
