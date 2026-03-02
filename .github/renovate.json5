@@ -24,9 +24,6 @@
       matchPackageNames: [
         '/^k8s.io/',
       ],
-      matchBaseBranches: [
-        'main',
-      ],
       automerge: false,
     },
     {
