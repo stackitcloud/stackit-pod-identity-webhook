@@ -2,13 +2,12 @@
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   extends: [
     'config:recommended',
+    ':semanticCommitsDisabled',
+    'github>gardener/ci-infra//config/renovate/automerge-with-tide.json5',
     'github>stackitcloud/ske-ci-infra//config/renovate/ske.json5',
   ],
   additionalReviewers: [
-    'crigertg',
-  ],
-  baseBranchPatterns: [
-    'main',
+    'team:ske-security',
   ],
   packageRules: [
     {
@@ -20,9 +19,6 @@
         'digest',
       ],
       automerge: true,
-      addLabels: [
-        'skip-review',
-      ],
     },
     {
       matchPackageNames: [
@@ -35,9 +31,6 @@
     },
     {
       groupName: 'devTools non-major',
-      matchManagers: [
-        'custom.regex',
-      ],
       matchFileNames: [
         '/Makefile$/',
         '/\\.mk$/',
@@ -48,9 +41,6 @@
         'patch',
       ],
       automerge: true,
-      addLabels: [
-        'skip-review',
-      ],
     },
   ],
 }
