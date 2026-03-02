@@ -16,12 +16,7 @@ Development tools like `ko`, `golangci-lint`, and `setup-envtest` are managed au
 - `hack`: Scripts and tooling configuration.
 
 ## Makefile Targets
-- `make verify`: Runs formatting checks, module tidying, linting, and all tests (default target).
-- `make check`: Runs linting and tests.
-- `make test`: Runs unit and integration tests using Ginkgo.
-- `make build`: Builds the manager binary in `bin/manager`.
-- `make image`: Builds the container image using `ko`.
-- `make skaffold-dev`: Runs `skaffold dev` with `cert-manager` enabled for local development.
+To see all available targets and their descriptions, run `make help`.
 
 # Local Deployment (kind)
 The easiest way to deploy locally is using the provided Makefile target, which automatically installs `cert-manager` and the webhook:
