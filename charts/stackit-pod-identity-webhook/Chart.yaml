@@ -1,0 +1,7 @@
+apiVersion: v2
+name: stackit-pod-identity-webhook
+description: A Helm chart for the STACKIT Pod Identity Webhook
+version: 0.1.0
+appVersion: "0.1.0"
+sources:
+  - https://github.com/stackitcloud/stackit-pod-identity-webhook

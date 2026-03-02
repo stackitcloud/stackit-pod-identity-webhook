@@ -1,0 +1,33 @@
+{{- if .Values.certmanager.enabled }}
+{{- if not .Values.certmanager.issuerName }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "stackit-pod-identity-webhook.fullname" . }}-selfsigned-issuer
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  selfSigned: {}
+---
+{{- end }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "stackit-pod-identity-webhook.fullname" . }}-cert
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  secretName: {{ .Values.webhook.tlsSecretName }}
+  duration: {{ .Values.certmanager.duration }}
+  renewBefore: {{ .Values.certmanager.renewBefore }}
+  issuerRef:
+    name: {{ .Values.certmanager.issuerName | default (printf "%s-selfsigned-issuer" (include "stackit-pod-identity-webhook.fullname" .)) }}
+    kind: {{ .Values.certmanager.issuerKind | default "Issuer" }}
+  commonName: {{ include "stackit-pod-identity-webhook.fullname" . }}.{{ .Release.Namespace }}.svc
+  dnsNames:
+  - {{ include "stackit-pod-identity-webhook.fullname" . }}
+  - {{ include "stackit-pod-identity-webhook.fullname" . }}.{{ .Release.Namespace }}
+  - {{ include "stackit-pod-identity-webhook.fullname" . }}.{{ .Release.Namespace }}.svc
+{{- end }}
