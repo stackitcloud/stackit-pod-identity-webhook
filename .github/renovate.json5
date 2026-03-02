@@ -26,18 +26,5 @@
       ],
       automerge: false,
     },
-    {
-      groupName: 'devTools non-major',
-      matchFileNames: [
-        '/Makefile$/',
-        '/\\.mk$/',
-        '/\\.sh$/',
-      ],
-      matchUpdateTypes: [
-        'minor',
-        'patch',
-      ],
-      automerge: true,
-    },
   ],
 }
