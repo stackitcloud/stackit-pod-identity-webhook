@@ -20,11 +20,5 @@
       ],
       automerge: true,
     },
-    {
-      matchPackageNames: [
-        '/^k8s.io/',
-      ],
-      automerge: false,
-    },
   ],
 }
