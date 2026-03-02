@@ -25,5 +25,5 @@ To contribute any code to this repository, just do the following:
    > Using a nolint directive should only be used as a last resort.
 5. Open a PR and make sure the CI pipelines succeeds.
 6. Wait for one of the maintainers to review your code and react to the comments.
-7. After approval the maintainers will merge the PR.
+7. After approval by the maintainers the PR will be merged.
 8. Thank you for your contribution! :)
