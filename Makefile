@@ -2,7 +2,7 @@
 REGISTRY ?= ghcr.io
 REPO ?= stackitcloud/stackit-pod-identity-webhook
 VERSION ?= $(shell git describe --dirty --tags --match='v*' 2>/dev/null || git rev-parse --short HEAD)
-PUSH ?= false
+PUSH ?= true
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit immediately on error, unset variables, and pipe failures.
