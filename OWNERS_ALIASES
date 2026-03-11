@@ -25,6 +25,7 @@ aliases:
     - hasit97
     - breuerfelix
     - viragvoros
+    - jastBytes
   
   stackit-pod-identity-webhook-approvers:
     - dergeberl
@@ -52,3 +53,4 @@ aliases:
     - hasit97
     - breuerfelix
     - viragvoros
+    - jastBytes
