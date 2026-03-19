@@ -10,7 +10,12 @@ If you're using SKE you don't need to setup this webhook in your cluster. It com
 Just set the `workload-identity.stackit.cloud/service-account-email` for your desired `ServiceAccount` ([see documentation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-accounts/)) and the
 projected volume and environment variables for the SDK will be injected into your pod spec using the annotated `ServiceAccount`.
 
-Make sure to configure the [federated identity provider](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-accounts/) for the service account. The `workload-identity.stackit.cloud/audience` and `workload-identity.stackit.cloud/service-account-email` annotations of the `ServiceAccount` in your cluster must match the configuration in the portal.
+Make sure to configure the [service account federation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations)
+for the service account you want to use from within your cluster. Therefore you need to specify the issuer url which is dependant on the environment
+`https://discovery.${BASE_DOMAIN}/projects/ondemand/shoots/<shoot-uid>/issuer` (also see `Shoot.status.advertisedAddresses`).
+
+The `workload-identity.stackit.cloud/audience` and `workload-identity.stackit.cloud/service-account-email` annotations of the `ServiceAccount` in your cluster must match the configuration in the portal.
+Grant the service account the permissions necessary for your use-case, e.g. `reader`.
 
 ## Features
 
