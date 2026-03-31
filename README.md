@@ -14,6 +14,8 @@ To use workload identity:
 
 1. Set the `workload-identity.stackit.cloud/service-account-email` annotation on your ServiceAccount.
 2. Configure service account federation in your cluster (via [Service Account Federation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations)).
+
+    > Note: The required issuer url is not visible in the portal at the moment. This feature is in development.
 3. Ensure the `workload-identity.stackit.cloud/audience` and `workload-identity.stackit.cloud/service-account-email` annotations match the portal configuration (these map to `aud` and `sub` in the Identity Provider).
 4. Assign appropriate permissions (e.g., `reader`) to the service account.
 
