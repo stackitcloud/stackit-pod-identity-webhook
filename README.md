@@ -6,16 +6,17 @@ for the STACKIT API.
 
 ## Use with SKE (STACKIT Kubernetes Engine)
 
-If you're using SKE you don't need to setup this webhook in your cluster. It comes preconfigured with every SKE cluster.
-Just set the `workload-identity.stackit.cloud/service-account-email` for your desired `ServiceAccount` ([see documentation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-accounts/)) and the
-projected volume and environment variables for the SDK will be injected into your pod spec using the annotated `ServiceAccount`.
+SKE Users: No webhook configuration is needed.
 
-Make sure to configure the [service account federation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations)
-for the service account you want to use from within your cluster. Therefore you need to specify the issuer url which is dependant on the environment
-`https://discovery.${BASE_DOMAIN}/projects/ondemand/shoots/<shoot-uid>/issuer` (also see `Shoot.status.advertisedAddresses`).
+SKE clusters come with preconfigured workload identity, so you don't need to install or manage the webhook.
 
-The `workload-identity.stackit.cloud/audience` and `workload-identity.stackit.cloud/service-account-email` annotations of the `ServiceAccount` in your cluster must match the configuration in the portal.
-Grant the service account the permissions necessary for your use-case, e.g. `reader`.
+To use workload identity:
+1. Set the `workload-identity.stackit.cloud/service-account-email` annotation on your ServiceAccount.
+2. Configure service account federation in your cluster (via [Service Account Federation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations)).
+3. Ensure the `workload-identity.stackit.cloud/audience` and `workload-identity.stackit.cloud/service-account-email` annotations match the portal configuration (these map to `aud` and `sub` in the Identity Provider).
+4. Assign appropriate permissions (e.g., `reader`) to the service account.
+
+> Note: The annotations must exactly match the values in the StackIT portal for identity federation to work.
 
 ## Features
 
