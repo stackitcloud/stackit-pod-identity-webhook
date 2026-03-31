@@ -7,7 +7,7 @@ REPO_POSTFIX                := -dev
 endif
 REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 HACK_DIR                    := $(REPO_ROOT)/hack
-export VERSION                     := $(shell git describe --tag --always --dirty)
+export VERSION              := $(shell git describe --tag --always --dirty)
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit immediately on error, unset variables, and pipe failures.
@@ -86,14 +86,14 @@ image: ## Builds the image using ko
 	--bare \
 	--platform linux/amd64,linux/arm64 \
 	./cmd/stackit-pod-identity-webhook \
-  | tee images.txt
+	| tee image.txt
 
-.PHONY: artifacts-only
-artifacts-only: $(HELM) $(YQ)
-	hack/push-artifacts.sh images.txt
+.PHONY: chart
+chart: $(HELM) $(YQ) ## Builds and pushes helm chart
+	hack/push-chart.sh $(shell cat image.txt) stackit-pod-identity-webhook
 
 .PHONY: artifacts
-artifacts: image artifacts-only
+artifacts: image chart ## Pushes all artifacts including image and helm chart
 
 .PHONY: clean
 clean: ## Clean binaries
