@@ -7,7 +7,7 @@ REPO_POSTFIX                := -dev
 endif
 REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 HACK_DIR                    := $(REPO_ROOT)/hack
-export VERSION              := $(shell git describe --tag --always --dirty)
+VERSION              := $(shell git describe --tag --always --dirty)
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit immediately on error, unset variables, and pipe failures.
