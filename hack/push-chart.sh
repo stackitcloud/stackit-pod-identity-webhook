@@ -19,6 +19,11 @@ if [[ -z "$IMAGE_TAG_FULL" || -z "$CHART_NAME" ]]; then
     exit 1
 fi
 
+if [[ "${PUSH:-false}" != "true" ]]; then
+    echo "PUSH is not set to true. Skipping chart push."
+    exit 0
+fi
+
 # Function to extract image repository from full tag
 # Example: ghcr.io/org/repo:v1.0.0 -> ghcr.io/org/repo
 # Example: ghcr.io/org/repo@sha256:abcd -> ghcr.io/org/repo
