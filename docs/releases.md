@@ -16,11 +16,9 @@ The primary release method is automated using a tool called `release-tool`. This
 1. **Draft Creation:** On every successful merge (post-submit) to the `main` branch, a Prow job automatically runs the `release-tool`. This tool creates a new draft release on GitHub or updates the existing one with a changelog generated from recent commits.
 2. **Publishing the Release:** When the draft is ready, navigate to the repository's "Releases" page on GitHub. Locate the draft, review the changelog, replace the placeholder with your GitHub handle and publish it by clicking the "Publish release" button.
 
-Publishing the release automatically creates the corresponding Git tag (e.g., `v1.3.1`), which triggers a separate Prow job to build the final container images and attach them to the GitHub release.
+Publishing the release automatically creates the corresponding Git tag (e.g., `v1.3.1`), which triggers a separate Prow job to build the final container image and helm chart.
 
 ## Manual Release Process (Fallback Method)
-
-> Note: only available for the maintainers of the repository
 
 If the `release-tool` or its associated Prow job fails, use the GitHub web UI to create and publish a release:
 
