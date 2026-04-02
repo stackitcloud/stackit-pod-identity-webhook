@@ -1,8 +1,13 @@
 # Image URL to use all building/pushing image targets
-REGISTRY ?= ghcr.io
-REPO ?= stackitcloud/stackit-pod-identity-webhook
-VERSION ?= $(shell git describe --dirty --tags --match='v*' 2>/dev/null || git rev-parse --short HEAD)
-PUSH ?= true
+REGISTRY                    ?= ghcr.io
+REPOSITORY                  := $(REGISTRY)/stackitcloud/stackit-pod-identity-webhook
+IS_DEV                      ?= true
+ifeq ($(IS_DEV),true)
+REPO_POSTFIX                := -dev
+endif
+REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+HACK_DIR                    := $(REPO_ROOT)/hack
+VERSION              := $(shell git describe --tag --always --dirty)
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit immediately on error, unset variables, and pipe failures.
@@ -66,19 +71,29 @@ kind-down: ## Delete kind cluster.
 
 ##@ Build
 
+export PUSH ?= false
+
 .PHONY: build
 build: fmt ## Build manager binary.
 	go build -o bin/manager ./cmd/stackit-pod-identity-webhook/main.go
 
 .PHONY: image
 image: ## Builds the image using ko
-	KO_DOCKER_REPO=$(REGISTRY)/$(REPO) \
+	KO_DOCKER_REPO=$(REPOSITORY)$(REPO_POSTFIX) \
 	go tool ko build --push=$(PUSH) \
 	--image-label org.opencontainers.image.source="https://github.com/stackitcloud/stackit-pod-identity-webhook" \
 	--sbom none -t $(VERSION) \
 	--bare \
 	--platform linux/amd64,linux/arm64 \
-	./cmd/stackit-pod-identity-webhook
+	./cmd/stackit-pod-identity-webhook \
+	| tee image.txt
+
+.PHONY: chart
+chart: $(HELM) $(YQ) ## Builds and pushes helm chart
+	hack/push-chart.sh $(shell cat image.txt) stackit-pod-identity-webhook
+
+.PHONY: artifacts
+artifacts: image chart ## Pushes all artifacts including image and helm chart
 
 .PHONY: clean
 clean: ## Clean binaries

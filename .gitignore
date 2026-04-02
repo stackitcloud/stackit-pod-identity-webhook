@@ -1,2 +1,5 @@
 hack/tools/bin
 bin
+.vscode
+artifacts/
+image.txt
