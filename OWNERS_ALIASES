@@ -28,29 +28,8 @@ aliases:
     - jastBytes
   
   stackit-pod-identity-webhook-approvers:
-    - dergeberl
-    - Duciwuci
-    - einfachnuralex
-    - JuliusSte
-    - Kumm-Kai
-    - maboehm
-    - MichaelEischer
-    - nschad
-    - OlegVanHorst
-    - RAPSNX
-    - robinschneider
-    - timebertt
-    - hown3d
-    - xoxys
-    - lukasjarosch
-    - ftl
     - crigertg
+    - MichaelEischer
+    - OlegVanHorst
     - relusc
-    - mstueer
-    - jamand
-    - cerealsnow
-    - aniruddha2000
-    - hasit97
-    - breuerfelix
-    - viragvoros
     - jastBytes
