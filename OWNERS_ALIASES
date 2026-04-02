@@ -1,56 +1,35 @@
 aliases:
   stackit-pod-identity-webhook-reviewers:
+    - aniruddha2000
+    - breuerfelix
+    - cerealsnow
+    - crigertg
     - dergeberl
     - Duciwuci
     - einfachnuralex
+    - ftl
+    - hasit97
+    - hown3d
+    - jamand
+    - jastBytes
     - JuliusSte
     - Kumm-Kai
+    - lukasjarosch
     - maboehm
     - MichaelEischer
+    - mstueer
     - nschad
     - OlegVanHorst
     - RAPSNX
+    - relusc
     - robinschneider
     - timebertt
-    - hown3d
-    - xoxys
-    - lukasjarosch
-    - ftl
-    - crigertg
-    - relusc
-    - mstueer
-    - jamand
-    - cerealsnow
-    - aniruddha2000
-    - hasit97
-    - breuerfelix
     - viragvoros
-    - jastBytes
+    - xoxys
   
   stackit-pod-identity-webhook-approvers:
-    - dergeberl
-    - Duciwuci
-    - einfachnuralex
-    - JuliusSte
-    - Kumm-Kai
-    - maboehm
-    - MichaelEischer
-    - nschad
-    - OlegVanHorst
-    - RAPSNX
-    - robinschneider
-    - timebertt
-    - hown3d
-    - xoxys
-    - lukasjarosch
-    - ftl
     - crigertg
-    - relusc
-    - mstueer
-    - jamand
-    - cerealsnow
-    - aniruddha2000
-    - hasit97
-    - breuerfelix
-    - viragvoros
     - jastBytes
+    - MichaelEischer
+    - OlegVanHorst
+    - relusc
