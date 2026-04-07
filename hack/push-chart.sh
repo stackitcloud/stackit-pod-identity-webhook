@@ -11,6 +11,7 @@ set -euo pipefail
 IMAGE_TAG_FULL="${1:-}"
 CHART_NAME="${2:-}"
 HELM_ARTIFACTS_DIR="artifacts/charts"
+HELM="go tool helm"
 
 if [[ -z "$IMAGE_TAG_FULL" || -z "$CHART_NAME" ]]; then
     echo "Usage: $0 <image-tag> <chart-name>"
@@ -90,7 +91,7 @@ function package_and_push_chart() {
     
     echo "Packaging chart ${chart_id} with version ${chart_version}..."
     local helm_package_output
-    if ! helm_package_output=$(helm package "$chart_build_dir" --version "$chart_version" -d "$HELM_ARTIFACTS_DIR" 2>&1); then
+    if ! helm_package_output=$(${HELM} package "$chart_build_dir" --version "$chart_version" -d "$HELM_ARTIFACTS_DIR" 2>&1); then
         echo "Error: helm package failed for chart ${chart_id}."
         echo "$helm_package_output"
         exit 1
@@ -111,7 +112,7 @@ function package_and_push_chart() {
 
     echo "Pushing ${packaged_chart_file} to ${push_url}..."
     local push_output
-    if ! push_output=$(helm push "$packaged_chart_file" "$push_url" 2>&1); then
+    if ! push_output=$(${HELM} push "$packaged_chart_file" "$push_url" 2>&1); then
         echo "Error: Failed to push chart ${chart_id}."
         echo "$push_output"
         exit 1
