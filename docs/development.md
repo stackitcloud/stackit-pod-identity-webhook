@@ -27,14 +27,17 @@ make skaffold-dev
 ```
 ## Testing Mutation
 
-After deploying the webhook you can check if it works:
+After deploying the webhook, you can verify it's working by applying a simple test pod:
 
-1. Apply the sample resources:
+1. Apply the test resources:
    ```bash
-   kubectl apply -f examples/test-identity.yaml
+   kubectl apply -f examples/mutation-test.yaml
    ```
 2. Verify the mutation on the Pod:
    ```bash
-   kubectl get pod test-pod -o yaml
+   kubectl get pod mutation-test-pod -o yaml
    ```
+   You should see injected environment variables (like `STACKIT_TOKEN_PATH`) and volume mounts.
+
+For a more comprehensive test that includes authentication with the STACKIT SDK, see the [Example Workload Documentation](example-workload.md).
 
