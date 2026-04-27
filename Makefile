@@ -1,6 +1,6 @@
 # Image URL to use all building/pushing image targets
 REGISTRY                    ?= ghcr.io
-REPOSITORY                  := $(REGISTRY)/stackitcloud/stackit-pod-identity-webhook
+IMAGE_ORG                   ?= stackitcloud
 IS_DEV                      ?= true
 ifeq ($(IS_DEV),true)
 REPO_POSTFIX                := -dev
@@ -77,24 +77,27 @@ export PUSH ?= false
 build: fmt ## Build manager binary.
 	go build -o bin/manager ./cmd/stackit-pod-identity-webhook/main.go
 
-.PHONY: image
-image: ## Builds the image using ko
-	KO_DOCKER_REPO=$(REPOSITORY)$(REPO_POSTFIX) \
+.PHONY: images
+images: image-stackit-pod-identity-webhook image-stackit-workload-identity-example-app ## Builds all images
+
+image-%: ## Builds a specific image using ko (e.g., make image-stackit-workload-identity-example-app)
+	KO_DOCKER_REPO=$(REGISTRY)/$(IMAGE_ORG)/$*$(REPO_POSTFIX) \
 	go tool ko build --push=$(PUSH) \
 	--image-label org.opencontainers.image.source="https://github.com/stackitcloud/stackit-pod-identity-webhook" \
 	--sbom none -t $(VERSION) \
 	--bare \
 	--platform linux/amd64,linux/arm64 \
-	./cmd/stackit-pod-identity-webhook \
-	| tee image.txt
+	./cmd/$* \
+	| tee image-$*.txt
 
 .PHONY: chart
 chart: $(HELM) $(YQ) ## Builds and pushes helm chart
-	hack/push-chart.sh $(shell cat image.txt) stackit-pod-identity-webhook
+	hack/push-chart.sh $(shell cat image-stackit-pod-identity-webhook.txt) stackit-pod-identity-webhook
 
 .PHONY: artifacts
-artifacts: image chart ## Pushes all artifacts including image and helm chart
+artifacts: images chart ## Pushes all artifacts including image and helm chart
 
 .PHONY: clean
-clean: ## Clean binaries
+clean: ## Clean binaries and image files
 	rm -rf bin/
+	rm -f image-*.txt
