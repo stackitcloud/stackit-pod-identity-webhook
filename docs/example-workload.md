@@ -34,7 +34,7 @@ Create an assertion with the `sub` claim. The value should equal `system:service
 If [stackit-workload-identity-example-app.yaml](../examples/stackit-workload-identity-example-app.yaml) is deployed to the `default`
 namespace the value would be `system:serviceaccount:default:stackit-workload-identity-example-app-sa`.
 
-For more details about the claims withing the cluster's JWT see the Kubernetes docs about 
+For more details about the claims of the cluster's JWT see the Kubernetes docs about 
 [Schema for service account private claims](https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#schema-for-service-account-private-claims).
 
 ## Running the Example

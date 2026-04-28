@@ -34,7 +34,7 @@ func run() error {
 		opts = append(opts, config.WithEndpoint(endpoint))
 	}
 
-	// Create a new API client, that uses default authentication and configuration
+	// Create a new API client that uses default authentication and configuration
 	skeClient, err := ske.NewAPIClient(opts...)
 	if err != nil {
 		return fmt.Errorf("creating API client: %w", err)
