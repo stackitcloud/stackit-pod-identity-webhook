@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/stackitcloud/stackit-sdk-go/core/config"
@@ -17,7 +18,7 @@ const defaultRegion = "eu01"
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		slog.Error("Application failed", "error", err)
 		os.Exit(1)
 	}
 }
@@ -30,7 +31,7 @@ func run() error {
 
 	var opts []config.ConfigurationOption
 	if endpoint := os.Getenv("STACKIT_SKE_ENDPOINT"); endpoint != "" {
-		fmt.Printf("Using custom SKE endpoint: %s\n", endpoint)
+		slog.Info("Using custom SKE endpoint", "endpoint", endpoint)
 		opts = append(opts, config.WithEndpoint(endpoint))
 	}
 
@@ -40,17 +41,17 @@ func run() error {
 		return fmt.Errorf("creating API client: %w", err)
 	}
 
-	fmt.Printf("Fetching SKE options for region %q...\n", region)
+	slog.Info("Fetching SKE options", "region", region)
 	getOptionsResp, err := skeClient.DefaultAPI.ListProviderOptions(context.Background(), region).Execute()
 	if err != nil {
 		return fmt.Errorf("calling ListProviderOptions: %w", err)
 	}
 
-	fmt.Println("Authentication successful, API call succeeded")
+	slog.Info("Authentication successful, API call succeeded")
 
 	availableVersions := getOptionsResp.KubernetesVersions
 	if len(availableVersions) == 0 {
-		fmt.Printf("WARNING: No Kubernetes versions found for region %q\n", region)
+		slog.Warn("No Kubernetes versions found", "region", region)
 	}
 
 	return nil
