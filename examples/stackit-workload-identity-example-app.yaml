@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: stackit-workload-identity-example-app-sa
+  annotations:
+    workload-identity.stackit.cloud/service-account-email: "yourserviceaccount@sa.stackit.cloud"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stackit-workload-identity-example-app
+spec:
+  template:
+    spec:
+      serviceAccountName: stackit-workload-identity-example-app-sa
+      containers:
+      - name: workload
+        image: ghcr.io/stackitcloud/stackit-workload-identity-example-app:latest
+      restartPolicy: OnFailure
+  backoffLimit: 4
