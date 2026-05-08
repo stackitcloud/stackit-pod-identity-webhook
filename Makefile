@@ -1,13 +1,15 @@
 # Image URL to use all building/pushing image targets
-REGISTRY                    ?= ghcr.io
-IMAGE_ORG                   ?= stackitcloud
-IS_DEV                      ?= true
+VERSION               := $(shell git describe --tag --always --dirty)
+REGISTRY              ?= ghcr.io
+IMAGE_ORG             ?= stackitcloud
+IMAGE_TAGS            := $(VERSION),latest
+IS_DEV                ?= true
 ifeq ($(IS_DEV),true)
-REPO_POSTFIX                := -dev
+REPO_POSTFIX          := -dev
+IMAGE_TAGS            := $(VERSION)
 endif
-REPO_ROOT                   := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-HACK_DIR                    := $(REPO_ROOT)/hack
-VERSION              := $(shell git describe --tag --always --dirty)
+REPO_ROOT             := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+HACK_DIR              := $(REPO_ROOT)/hack
 
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # Options are set to exit immediately on error, unset variables, and pipe failures.
@@ -84,7 +86,7 @@ image-%: ## Builds a specific image using ko (e.g., make image-stackit-workload-
 	KO_DOCKER_REPO=$(REGISTRY)/$(IMAGE_ORG)/$*$(REPO_POSTFIX) \
 	go tool ko build --push=$(PUSH) \
 	--image-label org.opencontainers.image.source="https://github.com/stackitcloud/stackit-pod-identity-webhook" \
-	--sbom none -t $(VERSION) \
+	--sbom none -t $(IMAGE_TAGS) \
 	--bare \
 	--platform linux/amd64,linux/arm64 \
 	./cmd/$* \
