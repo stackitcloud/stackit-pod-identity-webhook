@@ -94,7 +94,7 @@ image-%: ## Builds a specific image using ko (e.g., make image-stackit-workload-
 
 .PHONY: chart
 chart: $(HELM) $(YQ) ## Builds and pushes helm chart
-	hack/push-chart.sh $(shell cat image-stackit-pod-identity-webhook.txt) stackit-pod-identity-webhook
+	hack/push-chart.sh $(REGISTRY)/$(IMAGE_ORG)/stackit-pod-identity-webhook$(REPO_POSTFIX):$(VERSION) stackit-pod-identity-webhook
 
 .PHONY: artifacts
 artifacts: images chart ## Pushes all artifacts including image and helm chart
