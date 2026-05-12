@@ -6,7 +6,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
 	github.com/stackitcloud/stackit-sdk-go/core v0.26.0
-	github.com/stackitcloud/stackit-sdk-go/services/ske v1.12.0
+	github.com/stackitcloud/stackit-sdk-go/services/iaas v1.11.1
 	k8s.io/api v0.35.1
 	k8s.io/apimachinery v0.35.1
 	k8s.io/client-go v0.35.1
