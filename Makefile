@@ -89,8 +89,7 @@ image-%: ## Builds a specific image using ko (e.g., make image-stackit-workload-
 	--sbom none -t $(IMAGE_TAGS) \
 	--bare \
 	--platform linux/amd64,linux/arm64 \
-	./cmd/$* \
-	| tee image-$*.txt
+	./cmd/$*
 
 .PHONY: chart
 chart: $(HELM) $(YQ) ## Builds and pushes helm chart
@@ -102,4 +101,3 @@ artifacts: images chart ## Pushes all artifacts including image and helm chart
 .PHONY: clean
 clean: ## Clean binaries and image files
 	rm -rf bin/
-	rm -f image-*.txt
