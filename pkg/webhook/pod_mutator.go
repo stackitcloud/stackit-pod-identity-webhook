@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -29,13 +30,18 @@ import (
 
 // PodMutator mutates Pods
 type PodMutator struct {
-	Client client.Reader
+	Client    client.Reader
+	APIReader client.Reader
 }
 
 // SetupWithManager sets up the webhook with the Manager.
 func (m *PodMutator) SetupWithManager(mgr ctrl.Manager) error {
 	if m.Client == nil {
 		m.Client = mgr.GetClient()
+	}
+
+	if m.APIReader == nil {
+		m.APIReader = mgr.GetAPIReader()
 	}
 
 	return ctrl.NewWebhookManagedBy(mgr, &corev1.Pod{}).
@@ -72,6 +78,12 @@ func (m *PodMutator) Default(ctx context.Context, pod *corev1.Pod) error {
 
 	sa := &corev1.ServiceAccount{}
 	err := m.Client.Get(ctx, types.NamespacedName{Name: saName, Namespace: pod.Namespace}, sa)
+
+	if apierrors.IsNotFound(err) && m.APIReader != nil {
+		logger.Info("ServiceAccount not found in cache, falling back to APIReader", "sa", saName)
+		err = m.APIReader.Get(ctx, types.NamespacedName{Name: saName, Namespace: pod.Namespace}, sa)
+	}
+
 	if err != nil {
 		logger.Error(err, "failed to fetch ServiceAccount", "sa", saName)
 		return fmt.Errorf("failed to fetch ServiceAccount %s/%s: %w", pod.Namespace, saName, err)

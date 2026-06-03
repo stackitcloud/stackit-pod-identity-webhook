@@ -83,7 +83,8 @@ var _ = BeforeSuite(func() {
 
 	// Register the webhook
 	err = (&webhook.PodMutator{
-		Client: mgr.GetClient(),
+		Client:    mgr.GetClient(),
+		APIReader: mgr.GetAPIReader(),
 	}).SetupWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
