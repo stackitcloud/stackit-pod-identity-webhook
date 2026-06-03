@@ -65,7 +65,8 @@ func main() {
 
 	// Register the webhook
 	if err = (&webhook.PodMutator{
-		Client: mgr.GetClient(),
+		Client:    mgr.GetClient(),
+		APIReader: mgr.GetAPIReader(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Pod")
 		os.Exit(1)

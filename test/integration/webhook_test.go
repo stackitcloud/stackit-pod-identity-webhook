@@ -5,6 +5,8 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
 	"github.com/stackitcloud/stackit-pod-identity-webhook/pkg/webhook"
 )
@@ -149,6 +151,33 @@ var _ = Describe("Pod Identity Webhook Injection", func() {
 
 			By("verifying the Pod was NOT mutated")
 			Expect(pod.Spec.Volumes).To(BeEmpty())
+		})
+
+		It("should fall back to APIReader when ServiceAccount is not in cache", func() {
+			By("creating a ServiceAccount directly in the API server")
+			saName := "fallback-sa"
+			sa := NewTestServiceAccount(saName, namespace, map[string]string{
+				webhook.AnnotationServiceAccountEmail: "fallback@stackit.cloud",
+			})
+			Expect(k8sClient.Create(ctx, sa)).To(Succeed())
+
+			By("manually invoking the mutator with a client that misses the cache")
+
+			// Create a fake client that is empty to simulate a cache miss
+			cachedClient := fake.NewClientBuilder().WithScheme(scheme.Scheme).Build()
+
+			mutator := &webhook.PodMutator{
+				Client:    cachedClient,
+				APIReader: k8sClient, // Use the real API client as the APIReader
+			}
+
+			pod := NewTestPod("fallback-pod", namespace, saName, nil)
+
+			Expect(mutator.Default(ctx, pod)).To(Succeed())
+
+			By("verifying the Pod was mutated")
+			Expect(pod.Spec.Volumes).To(HaveLen(1))
+			Expect(pod.Spec.Volumes[0].Name).To(Equal(webhook.DefaultVolumeName))
 		})
 	})
 })
