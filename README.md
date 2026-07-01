@@ -6,9 +6,13 @@ for the STACKIT API.
 
 ## Use with SKE (STACKIT Kubernetes Engine)
 
-> SKE Users: Workload identity for SKE clusters is currently in development. It will not be necessary to manually install or manage the webhook.
+> [!IMPORTANT]
+> If you're using SKE you don't need to install the webhook.
+> It's installed in your control plane and you can start annotating
+> your service accounts.
 
-To use workload identity:
+> [!TIP]
+> Refer to [Use Workload Identity](https://docs.stackit.cloud/products/runtime/kubernetes-engine/how-tos/workload-identity/) in the STACKIT Docs.
 
 1. Set the `workload-identity.stackit.cloud/service-account-email` annotation on your ServiceAccount.
 2. Configure service account federation in your cluster (via [Service Account Federation](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations)).
