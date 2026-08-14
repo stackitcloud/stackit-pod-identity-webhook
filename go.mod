@@ -3,7 +3,7 @@ module github.com/stackitcloud/stackit-pod-identity-webhook
 go 1.26.3
 
 require (
-	github.com/onsi/ginkgo/v2 v2.32.0
+	github.com/onsi/ginkgo/v2 v2.32.1
 	github.com/onsi/gomega v1.42.1
 	github.com/stackitcloud/stackit-sdk-go/core v0.26.0
 	github.com/stackitcloud/stackit-sdk-go/services/iaas v1.14.0
