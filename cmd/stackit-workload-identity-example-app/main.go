@@ -17,16 +17,16 @@ import (
 )
 
 func main() {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
-	if err := run(ctx); err != nil {
+	if err := run(); err != nil {
 		slog.Error("Application failed", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run(ctx context.Context) error {
+func run() error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	var opts []config.ConfigurationOption
 	if endpoint := os.Getenv("STACKIT_IAAS_API_ENDPOINT"); endpoint != "" {
 		slog.Info("Using custom IaaS API endpoint", "endpoint", endpoint)
