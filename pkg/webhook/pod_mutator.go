@@ -103,7 +103,7 @@ func (m *PodMutator) Default(ctx context.Context, pod *corev1.Pod) error {
 	logger.Info("mutating pod", "sa", saName, "saEmail", saEmail)
 
 	// Mutate the pod
-	err = m.HandleMutatePod(pod, sa, saEmail)
+	err = m.HandleMutatePod(pod, sa)
 	if err != nil {
 		logger.Error(err, "failed to mutate pod")
 		return err
@@ -159,7 +159,7 @@ func validateAndParseAnnotations(annotations map[string]string) (ValidatedAnnota
 }
 
 // HandleMutatePod applies the mutation logic to the pod spec
-func (m *PodMutator) HandleMutatePod(pod *corev1.Pod, sa *corev1.ServiceAccount, saEmail string) error {
+func (m *PodMutator) HandleMutatePod(pod *corev1.Pod, sa *corev1.ServiceAccount) error {
 	parsedConfig, err := validateAndParseAnnotations(sa.Annotations)
 	if err != nil {
 		return err
