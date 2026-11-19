@@ -8,8 +8,8 @@ The application uses the [STACKIT SDK for Go](https://github.com/stackitcloud/st
 
 When running in a cluster with the `stackit-pod-identity-webhook` installed, the application automatically uses the identity injected into the Pod via the configured ServiceAccount.
 
-> [!NOTE]  
-> SKE Users: Workload identity for SKE clusters is currently in development. It will not be necessary to manually install or manage the webhook.
+> [!IMPORTANT]  
+> SKE Users: Workload identity for SKE clusters is enabled by default. It is not necessary to manually install or manage the webhook.
 
 ## Prerequisites
 
@@ -19,6 +19,9 @@ When running in a cluster with the `stackit-pod-identity-webhook` installed, the
 - Rudimentary knowledge about OIDC and identity federation
 
 ## Federation Configuration
+
+> [!TIP]
+> Official docs can be found here: [STACKIT SKE: Use Workload Identity](https://docs.stackit.cloud/products/runtime/kubernetes-engine/how-tos/workload-identity/).
 
 Refer to the STACKIT IdP documentation
 [Create, manage and delete federated identity providers](https://docs.stackit.cloud/platform/access-and-identity/service-accounts/how-tos/manage-service-account-federations/).
